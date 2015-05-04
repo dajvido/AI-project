@@ -28,7 +28,7 @@ object AppUI extends SimpleSwingApplication {
 
   def top = new MainFrame {
     title = "AI-Project"
-    minimumSize = new Dimension(800, 600)
+    minimumSize = new Dimension(800, 800)
 
     contents = new BorderPanel {
       border = Swing.EmptyBorder(10, 10, 10, 10)

@@ -8,7 +8,7 @@ import scala.swing.{Swing, TextArea}
  * Created by dajvido on 04.05.15.
  */
 class LifestyleArea extends TextArea {
-  preferredSize = new Dimension(580, 220)
+  preferredSize = new Dimension(580, 230)
   border = Swing.EmptyBorder(10, 10, 10, 10)
   editable = false
 

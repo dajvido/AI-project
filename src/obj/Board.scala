@@ -94,5 +94,5 @@ class Board(val boardPanel : BoardPanel) {
 }
 
 object Board {
-  val SIZE = 20
+  val SIZE = 15
 }
