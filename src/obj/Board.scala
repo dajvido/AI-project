@@ -17,7 +17,6 @@ class Board(val boardPanel : BoardPanel) {
       field = Pos.exampleMap((xi, yi))
     else
       field = 11
-    println(field)
     board(xi)(yi) = new Pos(xi,
       yi,
       Pos.enterableFor(field),
