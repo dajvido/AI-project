@@ -10,18 +10,20 @@ import java.io.File
 class Board(val boardPanel : BoardPanel) {
   val board = Array.ofDim[Pos](Board.SIZE, Board.SIZE)
   var posUnderHero = new Pos(0, 0)
+  var field = 0
 
   for(xi <- 0 to Board.SIZE-1; yi <- 0 to Board.SIZE-1) {
-    if (xi == 0 && yi == 0) board(0)(0) = new Pos(0, 0, img = Pos.HERO)
-    else {
-      val field = Pos.possibleField()
-      board(xi)(yi) = new Pos(xi,
-        yi,
-        Pos.enterableFor(field),
-        Pos.binFor(field),
-        Pos.shopFor(field),
-        Pos.imageFor(field))
-    }
+    if (Pos.exampleMap.isDefinedAt((xi, yi)))
+      field = Pos.exampleMap((xi, yi))
+    else
+      field = 11
+    println(field)
+    board(xi)(yi) = new Pos(xi,
+      yi,
+      Pos.enterableFor(field),
+      Pos.binFor(field),
+      Pos.shopFor(field),
+      Pos.imageFor(field))
   }
 
   def canMove(side: String, x: Int, y: Int): Boolean = {
@@ -84,11 +86,6 @@ class Board(val boardPanel : BoardPanel) {
         }
       }
       boardPanel.repaint()
-//      if (posUnderHero.isShop) {
-//        println("SHOP!")
-//      } else if (posUnderHero.isBin) {
-//        println("BIN!")
-//      }
     }
   }
 }

@@ -2,7 +2,7 @@ package obj
 
 import java.io.File
 
-import scala.util.Random
+import scala.collection.mutable.HashMap
 
 /**
  * Created by dajvido on 04.05.15.
@@ -38,53 +38,57 @@ object Pos {
 
   var ofHero = Array(0, 0)
 
-  var possible = scala.collection.mutable.HashMap.empty[Int, Int]
-  possible += (0 -> 225)
-  possible += (1 -> 3)
-  possible += (2 -> 3)
-  possible += (3 -> 3)
-  possible += (4 -> 3)
-  possible += (5 -> 3)
-  possible += (6 -> 3)
-  possible += (7 -> 3)
-  possible += (8 -> 3)
-  possible += (9 -> 3)
-  possible += (10 -> 3)
+  var exampleMap = HashMap.empty[(Int, Int), Int]
+  exampleMap += ((0,0) -> 0)
+  exampleMap += ((2,0) -> 4)
+  exampleMap += ((8,0) -> 8)
+  exampleMap += ((9,0) -> 8)
+  exampleMap += ((11,0) -> 7)
+  exampleMap += ((12,0) -> 10)
+  exampleMap += ((14,0) -> 3)
+  exampleMap += ((4,1) -> 8)
+  exampleMap += ((7,1) -> 8)
+  exampleMap += ((8,1) -> 8)
+  exampleMap += ((9,1) -> 8)
+  exampleMap += ((4,2) -> 8)
+  exampleMap += ((4,3) -> 10)
+  exampleMap += ((10,3) -> 1)
+  exampleMap += ((4,4) -> 8)
+  exampleMap += ((8,4) -> 6)
+  exampleMap += ((4,5) -> 10)
+  exampleMap += ((4,6) -> 10)
+  exampleMap += ((13,6) -> 6)
+  exampleMap += ((1,7) -> 9)
+  exampleMap += ((2,7) -> 9)
+  exampleMap += ((3,7) -> 9)
+  exampleMap += ((4,7) -> 9)
+  exampleMap += ((5,7) -> 5)
+  exampleMap += ((9,8) -> 8)
+  exampleMap += ((10,8) -> 8)
+  exampleMap += ((11,8) -> 8)
+  exampleMap += ((2,9) -> 2)
+  exampleMap += ((11,9) -> 7)
+  exampleMap += ((12,9) -> 10)
+  exampleMap += ((3,10) -> 5)
+  exampleMap += ((11,10) -> 7)
+  exampleMap += ((12,10) -> 6)
+  exampleMap += ((0,11) -> 3)
+  exampleMap += ((11,11) -> 7)
+  exampleMap += ((0,12) -> 8)
+  exampleMap += ((5,12) -> 4)
+  exampleMap += ((8,12) -> 8)
+  exampleMap += ((14,12) -> 6)
+  exampleMap += ((0,13) -> 6)
+  exampleMap += ((2,14) -> 1)
+  exampleMap += ((3,14) -> 10)
+  exampleMap += ((12,14) -> 2)
 
-  var r = Random
-
-  def possibleField(): Int = {
-    if (possible(0) > 20) {
-      var whatNext = r.nextInt(20)
-      if (whatNext > 1) {
-        possible(0) -= 1
-        return 0
-      } else if (possible(0) != possible.values.sum) {
-        var n = r.nextInt(10) + 1
-        while (possible(n) == 0) {
-          n = r.nextInt(11)
-        }
-        possible(n) -= 1
-        return n
-      } else {
-        possible(0) -= 1
-        return 0
-      }
-    } else {
-      var n = r.nextInt(11)
-      if (possible(n) != 0) {
-        possible(n) -= 1
-        return n
-      } else if (possible(0) != 0) {
-        possible(0) -= 0
-        return 0
-      } else {
-        while (possible(n) == 0) {
-          n = r.nextInt(11)
-        }
-        possible(n) -= 1
-        return n
-      }
+  def shopFor(n: Int): Boolean = {
+    n match {
+      case 1 => true
+      case 2 => true
+      case 3 => true
+      case _ => false
     }
   }
 
@@ -93,15 +97,6 @@ object Pos {
       case 4 => true
       case 5 => true
       case 6 => true
-      case _ => false
-    }
-  }
-
-  def shopFor(n: Int): Boolean = {
-    n match {
-      case 1 => true
-      case 2 => true
-      case 3 => true
       case _ => false
     }
   }
@@ -117,6 +112,7 @@ object Pos {
   }
   def imageFor(n: Int): File = {
     n match {
+      case 0 => HERO
       case 1 => SHOP_GLASS
       case 2 => SHOP_METAL
       case 3 => SHOP_PAPER

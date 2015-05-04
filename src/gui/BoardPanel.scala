@@ -4,7 +4,6 @@ import java.awt.{Graphics2D, Color, Dimension}
 import javax.imageio.ImageIO
 
 import _root_.obj.Pos
-import gui.AppUI
 
 import scala.swing.{Swing, Panel}
 
