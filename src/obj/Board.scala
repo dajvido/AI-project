@@ -4,9 +4,7 @@ import gui.BoardPanel
 
 import java.io.File
 
-/**
- * Created by dajvido on 04.05.15.
- */
+
 class Board(val boardPanel : BoardPanel) {
   val board = Array.ofDim[Pos](Board.SIZE, Board.SIZE)
   var posUnderHero = new Pos(0, 0)

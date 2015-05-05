@@ -6,9 +6,7 @@ import obj.{Values, Time, Board}
 
 import scala.swing.{SimpleSwingApplication, _}
 
-/**
- * Created by dajvido on 04.05.15.
- */
+
 object AppUI extends SimpleSwingApplication {
   def show(unit: Unit) = { top.visible = true }
 

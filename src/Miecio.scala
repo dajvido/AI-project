@@ -1,9 +1,8 @@
 import gui.AppUI
 
 import obj.Hero
-/**
- * Created by dajvido on 04.05.15.
- */
+
+
 object Miecio {
   def main(args: Array[String]) {
     AppUI.show()

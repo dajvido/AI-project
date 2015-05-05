@@ -4,6 +4,7 @@ import java.io.File
 
 import scala.collection.mutable._
 
+
 class Pos(val x : Int,
           val y : Int,
           val canEnter : Boolean = true,

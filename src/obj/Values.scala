@@ -1,5 +1,6 @@
 package obj
 
+
 object Values {
   val TITLE = "AI-Project"
   val TAG_INTERRUPTED = "TIME_THREAD"
@@ -9,6 +10,7 @@ object Values {
   val BUTTON_STOP = "Stop"
 
   val TIME_ZERO = "00:00"
+  val TIME_FORMAT = "mm:ss"
 
   val FONT_SANSSERIF = "SansSerif"
 

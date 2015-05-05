@@ -7,9 +7,7 @@ import _root_.obj.Pos
 
 import scala.swing.{Swing, Panel}
 
-/**
- * Created by dajvido on 04.05.15.
- */
+
 class BoardPanel extends Panel {
   private val POS_SIZE = 32
 

@@ -5,9 +5,7 @@ import java.awt.Dimension
 import scala.collection.mutable.HashMap
 import scala.swing.{Swing, TextArea}
 
-/**
- * Created by dajvido on 04.05.15.
- */
+
 class EquipmentArea extends TextArea {
   preferredSize = new Dimension(285, 380)
   border = Swing.EmptyBorder(10, 10, 10, 10)
