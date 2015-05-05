@@ -2,9 +2,7 @@ package gui
 
 import java.awt.Font
 
-import obj.Time
-
-import obj.Board
+import obj.{Values, Time, Board}
 
 import scala.swing.{SimpleSwingApplication, _}
 
@@ -19,26 +17,26 @@ object AppUI extends SimpleSwingApplication {
   val boardPanel = new BoardPanel
   val board = new Board(boardPanel)
 
-  val clock = new Label("00:00") {
+  val clock = new Label(Values.TIME_ZERO) {
     foreground = new Color(0, 0, 160)
-    font = new Font("SansSerif", Font.PLAIN, 14)
+    font = new Font(Values.FONT_SANSSERIF, Font.PLAIN, 14)
   }
 
   val buttons = new BoxPanel(Orientation.Horizontal) {
     border = Swing.EmptyBorder(0, 0, 10, 0)
-    contents += Button("Start") { startIt() }
-    contents += Button("Stop") { stopIt() }
+    contents += Button(Values.BUTTON_START) { startIt() }
+    contents += Button(Values.BUTTON_STOP) { stopIt() }
     contents += Swing.HGlue
     contents += clock
     contents += Swing.HGlue
-    contents += Button("Move North") { board.move("NORTH") }
-    contents += Button("Move West") { board.move("WEST") }
-    contents += Button("Move South") { board.move("SOUTH") }
-    contents += Button("Move East") { board.move("EAST") }
+    contents += Button(Values.TOWARDS_NORTH) { board.move(Values.TOWARDS_NORTH) }
+    contents += Button(Values.TOWARDS_WEST) { board.move(Values.TOWARDS_WEST) }
+    contents += Button(Values.TOWARDS_SOUTH) { board.move(Values.TOWARDS_SOUTH) }
+    contents += Button(Values.TOWARDS_EAST) { board.move(Values.TOWARDS_EAST) }
   }
 
   def top = new MainFrame {
-    title = "AI-Project"
+    title = Values.TITLE
     minimumSize = new Dimension(800, 800)
 
     contents = new BorderPanel {
@@ -62,7 +60,7 @@ object AppUI extends SimpleSwingApplication {
           tick()
         }
       } catch {
-        case e: java.lang.InterruptedException => lifestyleTextArea.write("TIME THREAD", "INTERUPT")
+        case e: java.lang.InterruptedException => lifestyleTextArea.write(Values.TAG_INTERRUPTED, Values.VAL_INTERRUPTED)
       }
     }
   }
