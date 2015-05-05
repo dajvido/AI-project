@@ -26,13 +26,13 @@ class Board(val boardPanel : BoardPanel) {
   }
 
   def canMove(side: String, x: Int, y: Int): Boolean = {
-    if ((side == "NORTH" && y == 0) || (side == "SOUTH" && y == Board.SIZE-1) || (side == "WEST" && x == 0) || (side == "EAST" && x == Board.SIZE-1)) {
+    if ((side == Values.TOWARDS_NORTH && y == 0) || (side == Values.TOWARDS_SOUTH && y == Board.SIZE-1) || (side == Values.TOWARDS_WEST && x == 0) || (side == Values.TOWARDS_EAST && x == Board.SIZE-1)) {
       return false
     } else {
       side match {
-        case "NORTH" => board(x)(y - 1).canEnter
-        case "WEST" => board(x - 1)(y).canEnter
-        case "SOUTH" => board(x)(y + 1).canEnter
+        case Values.TOWARDS_NORTH => board(x)(y - 1).canEnter
+        case Values.TOWARDS_WEST => board(x - 1)(y).canEnter
+        case Values.TOWARDS_SOUTH => board(x)(y + 1).canEnter
         case _ => board(x + 1)(y).canEnter
       }
     }
@@ -54,10 +54,8 @@ class Board(val boardPanel : BoardPanel) {
     posUnderHero = board(x)(y)
     Pos.ofHero = Array(x, y)
     if (posUnderHero.isShop) {
-      println("SHOP!")
       board(x)(y) = new Pos(x, y, img = whatUnder(posUnderHero.img))
     } else if (posUnderHero.isBin) {
-      println("BIN!")
       board(x)(y) = new Pos(x, y, img = whatUnder(posUnderHero.img))
     } else {
       board(x)(y) = new Pos(x, y, img = Pos.HERO)
@@ -71,13 +69,13 @@ class Board(val boardPanel : BoardPanel) {
     if (canMove(side, x, y)) {
       board(x)(y) = posUnderHero
       side match {
-        case "NORTH" => {
+        case Values.TOWARDS_NORTH => {
           setPos(x, y - 1)
         }
-        case "WEST" => {
+        case Values.TOWARDS_WEST => {
           setPos(x - 1, y)
         }
-        case "SOUTH" => {
+        case Values.TOWARDS_SOUTH => {
           setPos(x, y + 1)
         }
         case _ => {
