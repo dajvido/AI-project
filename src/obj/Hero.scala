@@ -1,9 +1,7 @@
 package obj
-import scala.collection.mutable.HashMap
 
-/**
- * Created by dajvido on 04.05.15.
- */
+import scala.collection.mutable._
+
 class Hero {
   var equipment = HashMap.empty[String, Int]
 }
