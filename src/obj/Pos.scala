@@ -2,11 +2,8 @@ package obj
 
 import java.io.File
 
-import scala.collection.mutable.HashMap
+import scala.collection.mutable._
 
-/**
- * Created by dajvido on 04.05.15.
- */
 class Pos(val x : Int,
           val y : Int,
           val canEnter : Boolean = true,
@@ -16,25 +13,25 @@ class Pos(val x : Int,
 }
 
 object Pos {
-  val BLANK = new File("./img/blank.png")
-  val HERO = new File("./img/bohater.png")
-  val HERO_FULL = new File("./img/bohater1.png")
-  val ROBOTS = new File("./img/roboty.png")
-  val CAR = new File("./img/samochod.png")
-  val TREE = new File("./img/drzewo.png")
-  val HOUSE = new File("./img/blok.png")
-  val BIN_LOW = new File("./img/kosz0.png")
-  val BIN_MEDIUM = new File("./img/kosz1.png")
-  val BIN_LARGE = new File("./img/kosz2.png")
-  val HERO_BIN_LOW = new File("./img/kosz0l.png")
-  val HERO_BIN_MEDIUM = new File("./img/kosz1l.png")
-  val HERO_BIN_LARGE = new File("./img/kosz2l.png")
-  val SHOP_METAL = new File("./img/sklep1.png")
-  val SHOP_GLASS = new File("./img/sklep2.png")
-  val SHOP_PAPER = new File("./img/sklep3.png")
-  val HERO_SHOP_METAL = new File("./img/sklep1l.png")
-  val HERO_SHOP_GLASS = new File("./img/sklep2l.png")
-  val HERO_SHOP_PAPER = new File("./img/sklep3l.png")
+  val BLANK = new File(Values.FILE_BLANK)
+  val HERO = new File(Values.FILE_HERO)
+  val HERO_FULL = new File(Values.FILE_HERO_FULL)
+  val ROBOTS = new File(Values.FILE_ROBOTS)
+  val CAR = new File(Values.FILE_CAR)
+  val TREE = new File(Values.FILE_TREE)
+  val HOUSE = new File(Values.FILE_HOUSE)
+  val BIN_LOW = new File(Values.FILE_BIN_LOW)
+  val BIN_MEDIUM = new File(Values.FILE_BIN_MEDIUM)
+  val BIN_LARGE = new File(Values.FILE_BIN_LARGE)
+  val HERO_BIN_LOW = new File(Values.FILE_HERO_BIN_LOW)
+  val HERO_BIN_MEDIUM = new File(Values.FILE_HERO_BIN_MEDIUM)
+  val HERO_BIN_LARGE = new File(Values.FILE_HERO_BIN_LARGE)
+  val SHOP_METAL = new File(Values.FILE_SHOP_METAL)
+  val SHOP_GLASS = new File(Values.FILE_SHOP_GLASS)
+  val SHOP_PAPER = new File(Values.FILE_SHOP_PAPER)
+  val HERO_SHOP_METAL = new File(Values.FILE_HERO_SHOP_METAL)
+  val HERO_SHOP_GLASS = new File(Values.FILE_HERO_SHOP_GLASS)
+  val HERO_SHOP_PAPER = new File(Values.FILE_HERO_SHOP_PAPER)
 
   var ofHero = Array(0, 0)
 
