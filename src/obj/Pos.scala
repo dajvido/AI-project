@@ -108,6 +108,7 @@ object Pos {
       case _ => true
     }
   }
+  
   def imageFor(n: Int): File = {
     n match {
       case 0 => HERO
