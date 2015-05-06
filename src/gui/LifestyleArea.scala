@@ -10,7 +10,7 @@ class LifestyleArea extends TextArea {
   border = Swing.EmptyBorder(10, 10, 10, 10)
   editable = false
 
-  def write(tag : String, msg : String) = {
+  def write(tag: String, msg: String) = {
     text += tag + " : " + msg + "\n"
   }
 }

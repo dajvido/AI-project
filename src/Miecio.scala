@@ -1,6 +1,5 @@
 import gui.AppUI
-
-import obj.{Values, Hero}
+import obj.{Hero, Values}
 
 
 object Miecio {

@@ -20,11 +20,6 @@ object Values {
 
   val FONT_SANSSERIF = "SansSerif"
 
-  val TOWARDS_NORTH = "NORTH"
-  val TOWARDS_SOUTH = "SOUTH"
-  val TOWARDS_EAST = "EAST"
-  val TOWARDS_WEST = "WEST"
-
   val ITEM_GLASS = "Glass"
   val ITEM_PAPER = "Paper"
   val ITEM_PLASTIC = "Plastic"

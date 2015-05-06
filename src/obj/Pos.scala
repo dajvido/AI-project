@@ -2,7 +2,7 @@ package obj
 
 import java.io.File
 
-import scala.collection.mutable._
+import scala.collection._
 
 
 class Pos(val x: Int,
@@ -36,7 +36,7 @@ object Pos {
 
   var ofHero = Array(0, 0)
 
-  var exampleMap = HashMap.empty[(Int, Int), Int]
+  var exampleMap = mutable.HashMap.empty[(Int, Int), Int]
   exampleMap += ((0, 0) -> 0)
   exampleMap += ((2, 0) -> 4)
   exampleMap += ((8, 0) -> 8)
@@ -83,9 +83,9 @@ object Pos {
 
   def mapField(x: Int, y: Int): Int = {
     if (exampleMap.isDefinedAt((x, y)))
-      return exampleMap((x, y))
+      exampleMap((x, y))
     else
-      return -1
+      -1
   }
 
   def imgUnderHero(img: File): File = {

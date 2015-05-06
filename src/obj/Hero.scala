@@ -1,8 +1,8 @@
 package obj
 
-import scala.collection.mutable._
+import scala.collection._
 
 
 class Hero {
-  var equipment = HashMap.empty[String, Int]
+  var equipment = mutable.HashMap.empty[String, Int]
 }

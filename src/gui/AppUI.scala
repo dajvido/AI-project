@@ -2,13 +2,15 @@ package gui
 
 import java.awt.Font
 
-import obj.{Values, Time, Board}
+import obj.{Board, Direction, Time, Values}
 
 import scala.swing.{SimpleSwingApplication, _}
 
 
 object AppUI extends SimpleSwingApplication {
-  def show(unit: Unit) = { top.visible = true }
+  def show(unit: Unit) = {
+    top.visible = true
+  }
 
   val lifestyleTextArea = new LifestyleArea
   val equipmentTextArea = new EquipmentArea
@@ -22,15 +24,27 @@ object AppUI extends SimpleSwingApplication {
 
   val buttons = new BoxPanel(Orientation.Horizontal) {
     border = Swing.EmptyBorder(0, 0, 10, 0)
-    contents += Button(Values.BUTTON_START) { startIt() }
-    contents += Button(Values.BUTTON_STOP) { stopIt() }
+    contents += Button(Values.BUTTON_START) {
+      startIt()
+    }
+    contents += Button(Values.BUTTON_STOP) {
+      stopIt()
+    }
     contents += Swing.HGlue
     contents += clock
     contents += Swing.HGlue
-    contents += Button(Values.TOWARDS_NORTH) { board.move(Values.TOWARDS_NORTH) }
-    contents += Button(Values.TOWARDS_WEST) { board.move(Values.TOWARDS_WEST) }
-    contents += Button(Values.TOWARDS_SOUTH) { board.move(Values.TOWARDS_SOUTH) }
-    contents += Button(Values.TOWARDS_EAST) { board.move(Values.TOWARDS_EAST) }
+    contents += Button(Direction.NORTH.toString) {
+      board.move(Direction.NORTH)
+    }
+    contents += Button(Direction.WEST.toString) {
+      board.move(Direction.WEST)
+    }
+    contents += Button(Direction.SOUTH.toString) {
+      board.move(Direction.SOUTH)
+    }
+    contents += Button(Direction.EAST.toString) {
+      board.move(Direction.EAST)
+    }
   }
 
   def top = new MainFrame {
@@ -51,9 +65,9 @@ object AppUI extends SimpleSwingApplication {
   }
 
   val thread = new Thread {
-    override def run: Unit = {
+    override def run(): Unit = {
       try {
-        while(true) {
+        while (true) {
           Thread.sleep(100)
           tick()
         }
@@ -64,7 +78,7 @@ object AppUI extends SimpleSwingApplication {
   }
 
   def startIt(): Unit = {
-    if (!thread.isAlive())
+    if (!thread.isAlive)
       thread.start()
   }
 
