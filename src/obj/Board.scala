@@ -1,8 +1,17 @@
 package obj
 
+import java.awt.{event, EventQueue}
+import java.awt.event.ActionListener
+
 import gui.BoardPanel
 import obj.Direction._
 import scala.collection.immutable.List
+import scala.collection.mutable.ListBuffer
+import javax.swing.Timer
+
+import scala.swing.event.ActionEvent
+
+object TestException extends Exception {}
 
 
 object Board {
@@ -65,13 +74,28 @@ object Board {
   }
 
   def move(direction: Direction): Unit = {
-    val heroPosition = Pos.ofHero
-    val x = heroPosition(0)
-    val y = heroPosition(1)
-    if (canMove(direction, x, y)) {
-      board(x)(y) = posUnderHero
-      newPosition(direction, x, y)
-      panel.repaint()
+    if (direction != NONE) {
+      val heroPosition = Pos.ofHero
+      val x = heroPosition(0)
+      val y = heroPosition(1)
+      if (canMove(direction, x, y)) {
+        board(x)(y) = posUnderHero
+        newPosition(direction, x, y)
+        println("x, y = " + x + ", " + y)
+        panel.repaint()
+      }
     }
   }
+
+  def moveList(movementInstruction: ListBuffer[Direction]): Unit = {
+    new Thread {
+      override def run(): Unit = {
+        movementInstruction.foreach(nextDirection => {
+          move(nextDirection)
+          Thread.sleep(200)
+        })
+      }
+    }.start()
+  }
+
 }

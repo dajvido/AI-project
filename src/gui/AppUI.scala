@@ -79,9 +79,10 @@ object AppUI extends SimpleSwingApplication {
     if (!thread.isAlive)
       thread.start()
 
-    val astar = new AStar((0, 0), (6,9))
-//    astar.getPath()
+    val astar = new AStar((0, 0), (6, 9))
     astar.generatePathMap()
+    val movement = astar.getPath()
+    Board.moveList(movement)
   }
 
   def stopIt(): Unit = {

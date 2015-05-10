@@ -2,6 +2,7 @@ package obj
 
 import scala.collection.mutable.ListBuffer
 import scala.math.{pow, sqrt}
+import obj.Direction._
 
 
 class Node(val parent: Pos, val current: Pos) {}
@@ -23,6 +24,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   while (openNodes.nonEmpty && !targetAchievied) {
 
     currentNode = getBestNode()
+    closedNodes.append(currentNode)
 
     val possibleSuccessors = getSuccessorsList(currentNode)
     try {
@@ -52,7 +54,6 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
         if (addToList)
           openNodes.append(successor)
       })
-      closedNodes.append(currentNode)
       //      println(":* " + currentNode.current.x + ", " + currentNode.current.y)
       //      println("Closed Nodes")
       //      closedNodes.foreach(n => {
@@ -104,7 +105,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   def generatePathMap(): Unit = {
     val map = Array.ofDim[String](Board.SIZE, Board.SIZE)
     for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
-      map(xi)(yi) = "  "
+      map(xi)(yi) = "   "
       closedNodes.foreach(node => {
         if (node.current.x == xi && node.current.y == yi) {
           map(xi)(yi) = "*  "
@@ -112,7 +113,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       })
     }
 
-    println("   0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15")
+    println("   0  1  2  3  4  5  6  7  8  9  10 11 12 13 14")
     for (yi <- 0 to Board.SIZE - 1) {
       if (yi < 10) print(yi + "  ") else print(yi + " ")
       for (xi <- 0 to Board.SIZE - 1) {
@@ -120,14 +121,26 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       }
       println()
     }
-    println("0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15")
+    println("0  1  2  3  4  5  6  7  8  9  10 11 12 13 14")
   }
 
-  def getPath(): Unit = {
-    val foundedPath = setPath()
+  def getPath(): ListBuffer[Direction] = {
+    val foundedPath = setPath().reverse
+    var lastPos = foundedPath.remove(0)
+    val movementInstruction = new ListBuffer[Direction]()
     foundedPath.foreach(pos => {
-      println("(" + pos._1 + "," + pos._2 + ")")
+      if (pos._1 > lastPos._1)
+        movementInstruction.append(EAST)
+      else if (pos._1 < lastPos._1)
+        movementInstruction.append(WEST)
+      else if (pos._2 > lastPos._2)
+        movementInstruction.append(SOUTH)
+      else
+        movementInstruction.append(NORTH)
+      lastPos = pos
+      //      println("(" + pos._1 + "," + pos._2 + ")")
     })
+    movementInstruction
   }
 
   def setPath(): ListBuffer[(Int, Int)] = {
@@ -139,19 +152,20 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     //    println(target.parent.x, target.parent.y)
     path.append(targetPosition)
     var pos = (target.parent.x, target.parent.y)
-    //    while (pos != startPosition) {
-    //    println(pos)
-    //            println("(" + pos._1 + "," + pos._2 + ") vs (" + startPosition._1 + "," + startPosition._2 + ")")
+    while (pos != startPosition) {
+      //    println(pos)
+      //            println("(" + pos._1 + "," + pos._2 + ") vs (" + startPosition._1 + "," + startPosition._2 + ")")
+      path.append(pos)
+      closedNodes.foreach(node => {
+        //                println("cN: " + (node.current.x, node.current.y) + " with parent " + (node.parent.x, node.parent.y))
+        //        println(pos._1 + "vs" + node.current.x + " " + (pos._1 == node.current.x).toString + " : " + pos._2 + "vs" + node.current.y + " " + (pos._2 == node.current.y).toString)
+        //        println(pos._2 + " vs " + node.current.y)
+        //        println("(" + pos._1 + "," + pos._2 + ") vs (" + node.current.x + "," + node.current.y + ")")
+        if (pos._1 == node.current.x && pos._2 == node.current.y)
+          pos = (node.parent.x, node.parent.y)
+      })
+    }
     path.append(pos)
-    closedNodes.foreach(node => {
-      //                println("cN: " + (node.current.x, node.current.y) + " with parent " + (node.parent.x, node.parent.y))
-      //        println(pos._1 + "vs" + node.current.x + " " + (pos._1 == node.current.x).toString + " : " + pos._2 + "vs" + node.current.y + " " + (pos._2 == node.current.y).toString)
-      //        println(pos._2 + " vs " + node.current.y)
-      //        println("(" + pos._1 + "," + pos._2 + ") vs (" + node.current.x + "," + node.current.y + ")")
-      if (pos._1 == node.current.x && pos._2 == node.current.y)
-        pos = (node.parent.x, node.parent.y)
-    })
-    //    }
     path
   }
 
@@ -161,6 +175,14 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
 
   def getPos(x: Int, y: Int): Pos = {
     Board.board(x)(y)
+  }
+
+  def isNotInClosedNodes(succ: Node): Boolean = {
+    var notInList = true
+    closedNodes.foreach(node =>
+      if (succ.current.x == node.current.x && succ.current.y == node.current.y)
+        notInList = false)
+    notInList
   }
 
   def getSuccessorsList(parent: Node): ListBuffer[Node] = {
@@ -174,7 +196,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
           parent = parent.current,
           current = westPos
         )
-        if (!closedNodes.contains(westNode)) {
+        if (isNotInClosedNodes(westNode)) {
           listSuccessors.append(westNode)
         }
       }
@@ -186,7 +208,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
           parent = parent.current,
           current = eastPos
         )
-        if (!closedNodes.contains(eastNode)) {
+        if (isNotInClosedNodes(eastNode)) {
           listSuccessors.append(eastNode)
         }
       }
@@ -198,19 +220,19 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
           parent = parent.current,
           current = northPos
         )
-        if (!closedNodes.contains(northNode)) {
+        if (isNotInClosedNodes(northNode)) {
           listSuccessors.append(northNode)
         }
       }
     }
     if (py < Board.SIZE - 1) {
-      val sothPos = getPos(px, py + 1)
-      if (sothPos.canEnter) {
+      val southPos = getPos(px, py + 1)
+      if (southPos.canEnter) {
         val southNode = new Node(
           parent = parent.current,
-          current = sothPos
+          current = southPos
         )
-        if (!closedNodes.contains(southNode)) {
+        if (isNotInClosedNodes(southNode)) {
           listSuccessors.append(southNode)
         }
       }
