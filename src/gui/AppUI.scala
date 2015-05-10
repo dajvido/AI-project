@@ -80,7 +80,8 @@ object AppUI extends SimpleSwingApplication {
       thread.start()
 
     val astar = new AStar((0, 0), (6,9))
-    astar.getPath()
+//    astar.getPath()
+    astar.generatePathMap()
   }
 
   def stopIt(): Unit = {

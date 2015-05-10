@@ -1,14 +1,14 @@
 package obj
 
 import scala.collection.mutable.ListBuffer
-import scala.math.abs
+import scala.math.{pow, sqrt}
 
-//class Node(val px: Int, val py: Int, val x: Int, val y: Int, val g: Float, val h: Float, val f: Float) {
-//
-//}
+
 class Node(val parent: Pos, val current: Pos) {}
 
 object TargetFounded extends Exception {}
+
+object NodeFounded extends Exception {}
 
 class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
 
@@ -53,7 +53,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
           openNodes.append(successor)
       })
       closedNodes.append(currentNode)
-      println(":* " + currentNode.current.x + ", " + currentNode.current.y)
+      //      println(":* " + currentNode.current.x + ", " + currentNode.current.y)
       //      println("Closed Nodes")
       //      closedNodes.foreach(n => {
       //        println(n.current.x + ", " + n.current.y)
@@ -65,7 +65,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       //      println("=========================================")
     } catch {
       case TargetFounded => {
-        println(currentNode.current.x + " " + currentNode.current.y)
+        //        println(currentNode.current.x + " " + currentNode.current.y)
         targetAchievied = true
       }
     }
@@ -73,18 +73,54 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
 
   def getBestNode(): Node = {
     var i = -1
-    var inc = true
+    //    var inc = true
+    var betterOne = false
 
     var bestNode = openNodes.apply(0)
-    openNodes.foreach(node => {
-      if (inc)
+    try
+      openNodes.foreach(node => {
+        //        if (inc)
         i += 1
-      if (node.current.f < bestNode.current.f) {
-        bestNode = node
-        inc = false
+        //        println(node.current.f + " : " + bestNode.current.f)
+        //        println(node.current.f < bestNode.current.f)
+        if (node.current.f < bestNode.current.f) {
+          bestNode = node
+          //          inc = false
+          throw NodeFounded
+        }
+      })
+    catch {
+      case NodeFounded => {
+        //        println("Best node: " + openNodes.apply(i))
+        betterOne = true
       }
-    })
+    }
+    if (!betterOne)
+      i = 0
+
     openNodes.remove(i)
+  }
+
+  def generatePathMap(): Unit = {
+    val map = Array.ofDim[String](Board.SIZE, Board.SIZE)
+    for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
+      map(xi)(yi) = "  "
+      closedNodes.foreach(node => {
+        if (node.current.x == xi && node.current.y == yi) {
+          map(xi)(yi) = "*  "
+        }
+      })
+    }
+
+    println("   0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15")
+    for (yi <- 0 to Board.SIZE - 1) {
+      if (yi < 10) print(yi + "  ") else print(yi + " ")
+      for (xi <- 0 to Board.SIZE - 1) {
+        print(map(xi)(yi))
+      }
+      println()
+    }
+    println("0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15")
   }
 
   def getPath(): Unit = {
@@ -95,30 +131,32 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   }
 
   def setPath(): ListBuffer[(Int, Int)] = {
+    closedNodes.foreach(node =>
+      println("cN: " +(node.current.x, node.current.y) + " with parent " +(node.parent.x, node.parent.y)))
     val path = new ListBuffer[(Int, Int)]
     val target = closedNodes.remove(closedNodes.length - 1)
     //    println(target.current.x, target.current.y)
     //    println(target.parent.x, target.parent.y)
     path.append(targetPosition)
     var pos = (target.parent.x, target.parent.y)
-    while (pos != startPosition) {
-      //    println(pos)
-      //      println("(" + pos._1 + "," + pos._2 + ") vs (" + startPosition._1 + "," + startPosition._2 + ")")
-      path.append(pos)
-      closedNodes.foreach(node => {
-        //        println((node.current.x, node.current.y))
-        //        println(pos._1 + "vs" + node.current.x + " " + (pos._1 == node.current.x).toString + " : " + pos._2 + "vs" + node.current.y + " " + (pos._2 == node.current.y).toString)
-        //        println(pos._2 + " vs " + node.current.y)
-        //        println("(" + pos._1 + "," + pos._2 + ") vs (" + node.current.x + "," + node.current.y + ")")
-        if (pos._1 == node.current.x && pos._2 == node.current.y)
-          pos = (node.parent.x, node.parent.y)
-      })
-    }
+    //    while (pos != startPosition) {
+    //    println(pos)
+    //            println("(" + pos._1 + "," + pos._2 + ") vs (" + startPosition._1 + "," + startPosition._2 + ")")
+    path.append(pos)
+    closedNodes.foreach(node => {
+      //                println("cN: " + (node.current.x, node.current.y) + " with parent " + (node.parent.x, node.parent.y))
+      //        println(pos._1 + "vs" + node.current.x + " " + (pos._1 == node.current.x).toString + " : " + pos._2 + "vs" + node.current.y + " " + (pos._2 == node.current.y).toString)
+      //        println(pos._2 + " vs " + node.current.y)
+      //        println("(" + pos._1 + "," + pos._2 + ") vs (" + node.current.x + "," + node.current.y + ")")
+      if (pos._1 == node.current.x && pos._2 == node.current.y)
+        pos = (node.parent.x, node.parent.y)
+    })
+    //    }
     path
   }
 
   def estimatedDistance(successor: Pos): Double = {
-    abs((successor.x + successor.y) - (targetPosition._1 + targetPosition._2))
+    sqrt(pow(targetPosition._1 - successor.x, 2) + pow(targetPosition._2 - successor.y, 2))
   }
 
   def getPos(x: Int, y: Int): Pos = {

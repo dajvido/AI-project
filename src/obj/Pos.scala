@@ -7,9 +7,9 @@ import scala.collection._
 
 class Pos(val x: Int,
           val y: Int,
-          var f: Double = 0,
-          var g: Double = 0,
-          var h: Double = 0,
+          var f: Double = 0.0,
+          var g: Double = 0.0,
+          var h: Double = 0.0,
           val canEnter: Boolean = true,
           val isBin: Boolean = false,
           val isShop: Boolean = false,
