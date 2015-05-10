@@ -3,6 +3,7 @@ package gui
 import java.awt.Font
 
 import obj._
+import obj.astar.AStar
 
 import scala.swing.{SimpleSwingApplication, _}
 

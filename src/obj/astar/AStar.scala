@@ -1,15 +1,12 @@
-package obj
+package obj.astar
+
+import obj.Direction._
+import obj.astar.exceptions.{NodeFoundedException, TargetNodeFoundedException}
+import obj.{Board, Pos}
 
 import scala.collection.mutable.ListBuffer
 import scala.math.{pow, sqrt}
-import obj.Direction._
 
-
-class Node(val parent: Pos, val current: Pos) {}
-
-object TargetFounded extends Exception {}
-
-object NodeFounded extends Exception {}
 
 class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
 
@@ -32,7 +29,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
         if ((successor.current.x, successor.current.y) == targetPosition) {
           closedNodes.append(successor)
           println("YEY")
-          throw TargetFounded
+          throw TargetNodeFoundedException
         }
         successor.current.g += currentNode.current.g
         successor.current.h = estimatedDistance(successor.current)
@@ -65,7 +62,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       //      })
       //      println("=========================================")
     } catch {
-      case TargetFounded => {
+      case TargetNodeFoundedException => {
         //        println(currentNode.current.x + " " + currentNode.current.y)
         targetAchievied = true
       }
@@ -87,11 +84,11 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
         if (node.current.f < bestNode.current.f) {
           bestNode = node
           //          inc = false
-          throw NodeFounded
+          throw NodeFoundedException
         }
       })
     catch {
-      case NodeFounded => {
+      case NodeFoundedException => {
         //        println("Best node: " + openNodes.apply(i))
         betterOne = true
       }
