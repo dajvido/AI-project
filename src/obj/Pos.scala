@@ -13,10 +13,8 @@ class Pos(val x: Int,
           val canEnter: Boolean = true,
           val isBin: Boolean = false,
           val isShop: Boolean = false,
-          val img: File = Pos.BLANK) {
+          val img: File = Pos.BLANK) {}
 
-//  var parentNode: Option[Pos] = None
-}
 
 object Pos {
   val BLANK = new File(Values.FILE_BLANK)

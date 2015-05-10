@@ -45,13 +45,13 @@ object AppUI extends SimpleSwingApplication {
       Board.move(Direction.EAST)
     }
     contents += Button("(6,9)") {
-      Board.moveTo((6,9))
+      Board.moveTo((6, 9))
     }
     contents += Button("(0,0)") {
-      Board.moveTo((0,0))
+      Board.moveTo((0, 0))
     }
     contents += Button("(14,9)") {
-      Board.moveTo((14,9))
+      Board.moveTo((14, 9))
     }
   }
 
