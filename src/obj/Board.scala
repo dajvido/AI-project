@@ -75,16 +75,14 @@ object Board {
   }
 
   def move(direction: Direction): Unit = {
-    if (direction != NONE) {
-      val heroPosition = Pos.ofHero
-      val x = heroPosition._1
-      val y = heroPosition._2
-      if (canMove(direction, x, y)) {
-        board(x)(y) = posUnderHero
-        newPosition(direction, x, y)
-        println("x, y = " + x + ", " + y)
-        panel.repaint()
-      }
+    val heroPosition = Pos.ofHero
+    val x = heroPosition._1
+    val y = heroPosition._2
+    if (canMove(direction, x, y)) {
+      board(x)(y) = posUnderHero
+      newPosition(direction, x, y)
+      println("x, y = " + x + ", " + y)
+      panel.repaint()
     }
   }
 

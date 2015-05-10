@@ -153,8 +153,6 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   }
 
   def setPath(): ListBuffer[(Int, Int)] = {
-    closedNodes.foreach(node =>
-      println("cN: " +(node.current.x, node.current.y) + " with parent " +(node.parent.x, node.parent.y)))
     val path = new ListBuffer[(Int, Int)]
     val target = closedNodes.last
     path.append(targetPosition)
