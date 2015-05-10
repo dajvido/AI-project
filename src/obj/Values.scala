@@ -18,13 +18,24 @@ object Values {
   val TIME_ZERO = "00:00"
   val TIME_FORMAT = "mm:ss"
 
-  val FONT_SANSSERIF = "SansSerif"
+  val FONT_SANS_SERIF = "SansSerif"
+
+  val METRIC = "   0  1  2  3  4  5  6  7  8  9  10 11 12 13 14"
+  val WALL = "\n###############################################\n\n"
+  val START_POS = "        Start: "
+  val TARGET_POS = " : Target: "
+  val NEXT_LINE = "\n"
+
+  val E = " "
+  val S = "*  "
+  val X = "X  "
 
   val ITEM_GLASS = "Glass"
   val ITEM_PAPER = "Paper"
   val ITEM_PLASTIC = "Plastic"
   val ITEM_ALUMINIUM = "Aluminium"
 
+  val FILE_LOG = "astar.log"
   val FILE_BLANK = "./img/blank.png"
   val FILE_HERO = "./img/bohater.png"
   val FILE_HERO_FULL = "./img/bohater1.png"

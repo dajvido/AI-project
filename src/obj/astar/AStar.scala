@@ -1,8 +1,10 @@
 package obj.astar
 
+import java.io.FileWriter
+
 import obj.Direction._
 import obj.astar.exceptions.{NodeFoundedException, TargetNodeFoundedException}
-import obj.{Board, Pos}
+import obj.{Board, Pos, Values}
 
 import scala.collection.mutable.ListBuffer
 import scala.math.{pow, sqrt}
@@ -17,8 +19,8 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   var currentNode = new Node(currentPos, currentPos)
   openNodes += currentNode
 
-  var targetAchievied = false
-  while (openNodes.nonEmpty && !targetAchievied) {
+  var targetAchieved = false
+  while (openNodes.nonEmpty && !targetAchieved) {
 
     currentNode = getBestNode
     closedNodes.append(currentNode)
@@ -52,7 +54,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       })
     catch {
       case TargetNodeFoundedException =>
-        targetAchievied = true
+        targetAchieved = true
     }
   }
 
@@ -79,26 +81,54 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     openNodes.remove(i)
   }
 
+  def writeTheLog(logList: ListBuffer[String]): Unit = {
+    val fw = new FileWriter(Values.FILE_LOG, true)
+    fw.write(Values.START_POS +(startPosition._1, startPosition._2) + Values.TARGET_POS +(targetPosition._1, targetPosition._2) + Values.NEXT_LINE)
+    logList.foreach(line => fw.write(line + Values.NEXT_LINE))
+    fw.write(Values.WALL)
+    fw.close()
+  }
+
   def generatePathMap(): Unit = {
+    val foundedPath = setPath().reverse
     val map = Array.ofDim[String](Board.SIZE, Board.SIZE)
     for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
-      map(xi)(yi) = "   "
+      map(xi)(yi) = Values.E * 3
       closedNodes.foreach(node => {
         if (node.current.x == xi && node.current.y == yi) {
-          map(xi)(yi) = "*  "
+          map(xi)(yi) = Values.S
+          foundedPath.foreach(pos => {
+            if ((xi, yi) == pos)
+              map(xi)(yi) = Values.X
+          })
         }
       })
     }
 
-    println("   0  1  2  3  4  5  6  7  8  9  10 11 12 13 14")
+    val logList = new ListBuffer[String]
+    var logRow: String = ""
+
+    logList.append(Values.METRIC)
+    println(Values.METRIC)
     for (yi <- 0 to Board.SIZE - 1) {
-      if (yi < 10) print(yi + "  ") else print(yi + " ")
+      if (yi < 10) {
+        logRow = yi + Values.E * 2
+        print(yi + Values.E * 2)
+      } else {
+        logRow = yi + Values.E
+        print(yi + Values.E)
+      }
       for (xi <- 0 to Board.SIZE - 1) {
+        logRow += map(xi)(yi)
         print(map(xi)(yi))
       }
+      logList.append(logRow)
       println()
     }
-    println("0  1  2  3  4  5  6  7  8  9  10 11 12 13 14")
+    logList.append(Values.METRIC)
+    println(Values.METRIC)
+
+    writeTheLog(logList)
   }
 
   def getPath: ListBuffer[Direction] = {
@@ -123,7 +153,8 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     closedNodes.foreach(node =>
       println("cN: " +(node.current.x, node.current.y) + " with parent " +(node.parent.x, node.parent.y)))
     val path = new ListBuffer[(Int, Int)]
-    val target = closedNodes.remove(closedNodes.length - 1)
+    //    val target = closedNodes.remove(closedNodes.length - 1)
+    val target = closedNodes.last
     path.append(targetPosition)
     var pos = (target.parent.x, target.parent.y)
     while (pos != startPosition) {

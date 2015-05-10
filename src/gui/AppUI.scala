@@ -18,7 +18,7 @@ object AppUI extends SimpleSwingApplication {
 
   val clock = new Label(Values.TIME_ZERO) {
     foreground = new Color(0, 0, 160)
-    font = new Font(Values.FONT_SANSSERIF, Font.PLAIN, 14)
+    font = new Font(Values.FONT_SANS_SERIF, Font.PLAIN, 14)
   }
 
   val buttons = new BoxPanel(Orientation.Horizontal) {
@@ -82,7 +82,7 @@ object AppUI extends SimpleSwingApplication {
 
     val astar = new AStar((0, 0), (6, 9))
     astar.generatePathMap()
-    val movement = astar.getPath()
+    val movement = astar.getPath
     Board.moveList(movement)
   }
 
