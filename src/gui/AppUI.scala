@@ -2,7 +2,7 @@ package gui
 
 import java.awt.Font
 
-import obj.{Board, Direction, Time, Values}
+import obj._
 
 import scala.swing.{SimpleSwingApplication, _}
 
@@ -14,8 +14,6 @@ object AppUI extends SimpleSwingApplication {
 
   val lifestyleTextArea = new LifestyleArea
   val equipmentTextArea = new EquipmentArea
-  val boardPanel = new BoardPanel
-  val board = new Board(boardPanel)
 
   val clock = new Label(Values.TIME_ZERO) {
     foreground = new Color(0, 0, 160)
@@ -34,16 +32,16 @@ object AppUI extends SimpleSwingApplication {
     contents += clock
     contents += Swing.HGlue
     contents += Button(Direction.NORTH.toString) {
-      board.move(Direction.NORTH)
+      Board.move(Direction.NORTH)
     }
     contents += Button(Direction.WEST.toString) {
-      board.move(Direction.WEST)
+      Board.move(Direction.WEST)
     }
     contents += Button(Direction.SOUTH.toString) {
-      board.move(Direction.SOUTH)
+      Board.move(Direction.SOUTH)
     }
     contents += Button(Direction.EAST.toString) {
-      board.move(Direction.EAST)
+      Board.move(Direction.EAST)
     }
   }
 
@@ -54,7 +52,7 @@ object AppUI extends SimpleSwingApplication {
     contents = new BorderPanel {
       border = Swing.EmptyBorder(10, 10, 10, 10)
       add(buttons, BorderPanel.Position.North)
-      add(boardPanel, BorderPanel.Position.Center)
+      add(Board.panel, BorderPanel.Position.Center)
       add(lifestyleTextArea, BorderPanel.Position.South)
       add(equipmentTextArea, BorderPanel.Position.East)
     }
@@ -80,6 +78,9 @@ object AppUI extends SimpleSwingApplication {
   def startIt(): Unit = {
     if (!thread.isAlive)
       thread.start()
+
+    val astar = new AStar((0, 0), (6,9))
+    astar.getPath()
   }
 
   def stopIt(): Unit = {

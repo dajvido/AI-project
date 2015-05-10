@@ -7,10 +7,15 @@ import scala.collection._
 
 class Pos(val x: Int,
           val y: Int,
+          var f: Double = 0,
+          var g: Double = 0,
+          var h: Double = 0,
           val canEnter: Boolean = true,
           val isBin: Boolean = false,
           val isShop: Boolean = false,
           val img: File = Pos.BLANK) {
+
+//  var parentNode: Option[Pos] = None
 }
 
 object Pos {
@@ -125,6 +130,20 @@ object Pos {
       case 9 => false
       case 10 => false
       case _ => true
+    }
+  }
+
+
+  def moveCost(n: Int): Int = {
+    n match {
+      case 1 => 2
+      case 2 => 2
+      case 3 => 2
+      case 4 => 2
+      case 5 => 2
+      case 6 => 2
+      case 7 => 3
+      case _ => 1
     }
   }
 

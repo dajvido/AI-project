@@ -3,7 +3,7 @@ package gui
 import java.awt.{Color, Dimension, Graphics2D}
 import javax.imageio.ImageIO
 
-import _root_.obj.Pos
+import obj.{Board, Pos}
 
 import scala.swing.{Panel, Swing}
 
@@ -20,7 +20,7 @@ class BoardPanel extends Panel {
 
 
   override def paintComponent(g: Graphics2D): Unit = {
-    AppUI.board.board.foreach(_.foreach(drawTile(g, _)))
+    Board.board.foreach(_.foreach(drawTile(g, _)))
   }
 
   private def drawTile(g: Graphics2D, pos: Pos): Unit = {

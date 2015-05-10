@@ -2,31 +2,37 @@ package obj
 
 import gui.BoardPanel
 import obj.Direction._
+import scala.collection.immutable.List
 
 
-class Board(val boardPanel: BoardPanel) {
-  val board = Array.ofDim[Pos](Board.SIZE, Board.SIZE)
+object Board {
+  val panel = new BoardPanel
+  val SIZE = 15
+  val board = Array.ofDim[Pos](SIZE, SIZE)
+  val boardList = List[Pos]()
   var posUnderHero = new Pos(0, 0)
   var field = 0
 
-  for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
+  for (xi <- 0 to SIZE - 1; yi <- 0 to SIZE - 1) {
     field = Pos.mapField(xi, yi)
     board(xi)(yi) = new Pos(
-      xi,
-      yi,
-      Pos.enterableFor(field),
-      Pos.binFor(field),
-      Pos.shopFor(field),
-      Pos.imageFor(field)
+      x = xi,
+      y = yi,
+      g = Pos.moveCost(field),
+      canEnter = Pos.enterableFor(field),
+      isBin = Pos.binFor(field),
+      isShop = Pos.shopFor(field),
+      img = Pos.imageFor(field)
     )
+    board(xi)(yi) :: boardList
   }
 
   def isNotEdgeOfTheMap(direction: Direction, x: Int, y: Int): Boolean = {
     direction match {
       case NORTH => y != 0
-      case SOUTH => y != Board.SIZE - 1
+      case SOUTH => y != SIZE - 1
       case WEST => x != 0
-      case _ => x != Board.SIZE - 1
+      case _ => x != SIZE - 1
     }
   }
 
@@ -65,11 +71,7 @@ class Board(val boardPanel: BoardPanel) {
     if (canMove(direction, x, y)) {
       board(x)(y) = posUnderHero
       newPosition(direction, x, y)
-      boardPanel.repaint()
+      panel.repaint()
     }
   }
-}
-
-object Board {
-  val SIZE = 15
 }
