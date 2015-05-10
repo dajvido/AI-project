@@ -5,6 +5,7 @@ import java.awt.event.ActionListener
 
 import gui.BoardPanel
 import obj.Direction._
+import obj.astar.AStar
 import scala.collection.immutable.List
 import scala.collection.mutable.ListBuffer
 import javax.swing.Timer
@@ -60,7 +61,7 @@ object Board {
 
   def setPos(x: Int, y: Int): Unit = {
     posUnderHero = board(x)(y)
-    Pos.ofHero = Array(x, y)
+    Pos.ofHero = (x, y)
     board(x)(y) = new Pos(x, y, img = Pos.imgUnderHero(posUnderHero.img))
   }
 
@@ -76,8 +77,8 @@ object Board {
   def move(direction: Direction): Unit = {
     if (direction != NONE) {
       val heroPosition = Pos.ofHero
-      val x = heroPosition(0)
-      val y = heroPosition(1)
+      val x = heroPosition._1
+      val y = heroPosition._2
       if (canMove(direction, x, y)) {
         board(x)(y) = posUnderHero
         newPosition(direction, x, y)
@@ -98,4 +99,10 @@ object Board {
     }.start()
   }
 
+  def moveTo(targetPos: (Int, Int)): Unit = {
+    val astar = new AStar(Pos.ofHero, targetPos)
+    astar.generatePathMap()
+    val movement = astar.getPath
+    Board.moveList(movement)
+  }
 }

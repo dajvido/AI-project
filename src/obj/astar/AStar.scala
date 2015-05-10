@@ -3,7 +3,7 @@ package obj.astar
 import java.io.FileWriter
 
 import obj.Direction._
-import obj.astar.exceptions.{NodeFoundedException, TargetNodeFoundedException}
+import obj.astar.exceptions.{GoodJokeException, NodeFoundedException, TargetNodeFoundedException}
 import obj.{Board, Pos, Values}
 
 import scala.collection.mutable.ListBuffer
@@ -11,6 +11,9 @@ import scala.math.{pow, sqrt}
 
 
 class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
+
+  if (startPosition == targetPosition)
+    throw GoodJokeException
 
   var openNodes = new ListBuffer[Node]()
   var closedNodes = new ListBuffer[Node]()
@@ -153,7 +156,6 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     closedNodes.foreach(node =>
       println("cN: " +(node.current.x, node.current.y) + " with parent " +(node.parent.x, node.parent.y)))
     val path = new ListBuffer[(Int, Int)]
-    //    val target = closedNodes.remove(closedNodes.length - 1)
     val target = closedNodes.last
     path.append(targetPosition)
     var pos = (target.parent.x, target.parent.y)

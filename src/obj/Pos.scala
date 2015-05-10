@@ -39,7 +39,7 @@ object Pos {
   val HERO_SHOP_GLASS = new File(Values.FILE_HERO_SHOP_GLASS)
   val HERO_SHOP_PAPER = new File(Values.FILE_HERO_SHOP_PAPER)
 
-  var ofHero = Array(0, 0)
+  var ofHero = (0, 0)
 
   var exampleMap = mutable.HashMap.empty[(Int, Int), Int]
   exampleMap += ((0, 0) -> 0)

@@ -44,6 +44,15 @@ object AppUI extends SimpleSwingApplication {
     contents += Button(Direction.EAST.toString) {
       Board.move(Direction.EAST)
     }
+    contents += Button("(6,9)") {
+      Board.moveTo((6,9))
+    }
+    contents += Button("(0,0)") {
+      Board.moveTo((0,0))
+    }
+    contents += Button("(14,9)") {
+      Board.moveTo((14,9))
+    }
   }
 
   def top = new MainFrame {
@@ -79,11 +88,6 @@ object AppUI extends SimpleSwingApplication {
   def startIt(): Unit = {
     if (!thread.isAlive)
       thread.start()
-
-    val astar = new AStar((0, 0), (6, 9))
-    astar.generatePathMap()
-    val movement = astar.getPath
-    Board.moveList(movement)
   }
 
   def stopIt(): Unit = {
