@@ -1,9 +1,7 @@
 package gui
 
-import java.awt.event.ActionListener
-import java.awt.{event, Color, Dimension, Graphics2D}
+import java.awt.{Color, Dimension, Graphics2D}
 import javax.imageio.ImageIO
-import javax.swing.Timer
 
 import obj.{Board, Pos}
 
@@ -19,15 +17,6 @@ class BoardPanel extends Panel {
     obj.Board.SIZE * POS_SIZE)
   background = new Color(0, 0, 0)
   border = Swing.EmptyBorder(10, 10, 10, 10)
-
-//
-//  val timerDelay = 30
-//  new Timer(timerDelay, new ActionListener {
-//    override def actionPerformed(actionEvent: event.ActionEvent): Unit = {
-//      repaint()
-//    }
-//  }).start()
-
 
   override def paintComponent(g: Graphics2D): Unit = {
     Board.board.foreach(_.foreach(drawTile(g, _)))

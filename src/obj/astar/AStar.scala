@@ -3,7 +3,7 @@ package obj.astar
 import java.io.FileWriter
 
 import obj.Direction._
-import obj.astar.exceptions.{GoodJokeException, NodeFoundedException, TargetNodeFoundedException}
+import obj.astar.exceptions.{NodeFoundedException, TargetNodeFoundedException}
 import obj.{Board, Pos, Values}
 
 import scala.collection.mutable.ListBuffer
@@ -11,9 +11,6 @@ import scala.math.{pow, sqrt}
 
 
 class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
-
-  if (startPosition == targetPosition)
-    throw GoodJokeException
 
   var openNodes = new ListBuffer[Node]()
   var closedNodes = new ListBuffer[Node]()
@@ -23,7 +20,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   openNodes += currentNode
 
   var targetAchieved = false
-  while (openNodes.nonEmpty && !targetAchieved) {
+  while (openNodes.nonEmpty && !targetAchieved && isDifferentStartAndTargetPos) {
 
     currentNode = getBestNode
     closedNodes.append(currentNode)
@@ -61,6 +58,10 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     }
   }
 
+  def isDifferentStartAndTargetPos: Boolean = {
+    startPosition != targetPosition
+  }
+
   def getBestNode: Node = {
     var i = -1
     var betterOne = false
@@ -93,7 +94,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   }
 
   def generatePathMap(): Unit = {
-    val foundedPath = setPath().reverse
+    val foundedPath = setPath()
     val map = Array.ofDim[String](Board.SIZE, Board.SIZE)
     for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
       map(xi)(yi) = Values.E * 3
@@ -135,37 +136,41 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   }
 
   def getPath: ListBuffer[Direction] = {
-    val foundedPath = setPath().reverse
-    var lastPos = foundedPath.remove(0)
     val movementInstruction = new ListBuffer[Direction]()
-    foundedPath.foreach(pos => {
-      if (pos._1 > lastPos._1)
-        movementInstruction.append(EAST)
-      else if (pos._1 < lastPos._1)
-        movementInstruction.append(WEST)
-      else if (pos._2 > lastPos._2)
-        movementInstruction.append(SOUTH)
-      else
-        movementInstruction.append(NORTH)
-      lastPos = pos
-    })
+    if (isDifferentStartAndTargetPos) {
+      val foundedPath = setPath()
+      var lastPos = foundedPath.remove(0)
+      foundedPath.foreach(pos => {
+        if (pos._1 > lastPos._1)
+          movementInstruction.append(EAST)
+        else if (pos._1 < lastPos._1)
+          movementInstruction.append(WEST)
+        else if (pos._2 > lastPos._2)
+          movementInstruction.append(SOUTH)
+        else
+          movementInstruction.append(NORTH)
+        lastPos = pos
+      })
+    }
     movementInstruction
   }
 
   def setPath(): ListBuffer[(Int, Int)] = {
     val path = new ListBuffer[(Int, Int)]
-    val target = closedNodes.last
-    path.append(targetPosition)
-    var pos = (target.parent.x, target.parent.y)
-    while (pos != startPosition) {
+    if (isDifferentStartAndTargetPos) {
+      val target = closedNodes.last
+      path.append(targetPosition)
+      var pos = (target.parent.x, target.parent.y)
+      while (pos != startPosition) {
+        path.append(pos)
+        closedNodes.foreach(node => {
+          if (pos._1 == node.current.x && pos._2 == node.current.y)
+            pos = (node.parent.x, node.parent.y)
+        })
+      }
       path.append(pos)
-      closedNodes.foreach(node => {
-        if (pos._1 == node.current.x && pos._2 == node.current.y)
-          pos = (node.parent.x, node.parent.y)
-      })
     }
-    path.append(pos)
-    path
+    path.reverse
   }
 
   def estimatedDistance(successor: Pos): Double = {
@@ -184,57 +189,42 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     notInList
   }
 
+  def getNodeOrNull(checkPos: Pos, parentNode: Node): Node = {
+    if (checkPos.canEnter) {
+      val availableNode = new Node(
+        parent = parentNode.current,
+        current = checkPos
+      )
+      if (isNotInClosedNodes(availableNode)) {
+        return availableNode
+      }
+    }
+    null
+  }
+
   def getSuccessorsList(parent: Node): ListBuffer[Node] = {
     val px = parent.current.x
     val py = parent.current.y
     val listSuccessors = new ListBuffer[Node]()
     if (px > 0) {
-      val westPos = getPos(px - 1, py)
-      if (westPos.canEnter) {
-        val westNode = new Node(
-          parent = parent.current,
-          current = westPos
-        )
-        if (isNotInClosedNodes(westNode)) {
-          listSuccessors.append(westNode)
-        }
-      }
+      val availableNode = getNodeOrNull(getPos(px - 1, py), parent)
+      if (availableNode.isInstanceOf[Node])
+        listSuccessors.append(availableNode)
     }
     if (px < Board.SIZE - 1) {
-      val eastPos = getPos(px + 1, py)
-      if (eastPos.canEnter) {
-        val eastNode = new Node(
-          parent = parent.current,
-          current = eastPos
-        )
-        if (isNotInClosedNodes(eastNode)) {
-          listSuccessors.append(eastNode)
-        }
-      }
+      val availableNode = getNodeOrNull(getPos(px + 1, py), parent)
+      if (availableNode.isInstanceOf[Node])
+        listSuccessors.append(availableNode)
     }
     if (py > 0) {
-      val northPos = getPos(px, py - 1)
-      if (northPos.canEnter) {
-        val northNode = new Node(
-          parent = parent.current,
-          current = northPos
-        )
-        if (isNotInClosedNodes(northNode)) {
-          listSuccessors.append(northNode)
-        }
-      }
+      val availableNode = getNodeOrNull(getPos(px, py - 1), parent)
+      if (availableNode.isInstanceOf[Node])
+        listSuccessors.append(availableNode)
     }
     if (py < Board.SIZE - 1) {
-      val southPos = getPos(px, py + 1)
-      if (southPos.canEnter) {
-        val southNode = new Node(
-          parent = parent.current,
-          current = southPos
-        )
-        if (isNotInClosedNodes(southNode)) {
-          listSuccessors.append(southNode)
-        }
-      }
+      val availableNode = getNodeOrNull(getPos(px, py + 1), parent)
+      if (availableNode.isInstanceOf[Node])
+        listSuccessors.append(availableNode)
     }
     listSuccessors
   }

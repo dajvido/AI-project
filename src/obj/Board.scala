@@ -1,18 +1,11 @@
 package obj
 
-import java.awt.{event, EventQueue}
-import java.awt.event.ActionListener
-
 import gui.BoardPanel
 import obj.Direction._
 import obj.astar.AStar
+
 import scala.collection.immutable.List
 import scala.collection.mutable.ListBuffer
-import javax.swing.Timer
-
-import scala.swing.event.ActionEvent
-
-object TestException extends Exception {}
 
 
 object Board {
