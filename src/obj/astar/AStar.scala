@@ -20,15 +20,14 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   var targetAchievied = false
   while (openNodes.nonEmpty && !targetAchievied) {
 
-    currentNode = getBestNode()
+    currentNode = getBestNode
     closedNodes.append(currentNode)
 
     val possibleSuccessors = getSuccessorsList(currentNode)
-    try {
+    try
       possibleSuccessors.foreach(successor => {
         if ((successor.current.x, successor.current.y) == targetPosition) {
           closedNodes.append(successor)
-          println("YEY")
           throw TargetNodeFoundedException
         }
         successor.current.g += currentNode.current.g
@@ -51,47 +50,28 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
         if (addToList)
           openNodes.append(successor)
       })
-      //      println(":* " + currentNode.current.x + ", " + currentNode.current.y)
-      //      println("Closed Nodes")
-      //      closedNodes.foreach(n => {
-      //        println(n.current.x + ", " + n.current.y)
-      //      })
-      //      println("Open Nodes")
-      //      openNodes.foreach(n => {
-      //        println(n.current.x + ", " + n.current.y)
-      //      })
-      //      println("=========================================")
-    } catch {
-      case TargetNodeFoundedException => {
-        //        println(currentNode.current.x + " " + currentNode.current.y)
+    catch {
+      case TargetNodeFoundedException =>
         targetAchievied = true
-      }
     }
   }
 
-  def getBestNode(): Node = {
+  def getBestNode: Node = {
     var i = -1
-    //    var inc = true
     var betterOne = false
 
-    var bestNode = openNodes.apply(0)
+    var bestNode = openNodes.head
     try
       openNodes.foreach(node => {
-        //        if (inc)
         i += 1
-        //        println(node.current.f + " : " + bestNode.current.f)
-        //        println(node.current.f < bestNode.current.f)
         if (node.current.f < bestNode.current.f) {
           bestNode = node
-          //          inc = false
           throw NodeFoundedException
         }
       })
     catch {
-      case NodeFoundedException => {
-        //        println("Best node: " + openNodes.apply(i))
+      case NodeFoundedException =>
         betterOne = true
-      }
     }
     if (!betterOne)
       i = 0
@@ -121,7 +101,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     println("0  1  2  3  4  5  6  7  8  9  10 11 12 13 14")
   }
 
-  def getPath(): ListBuffer[Direction] = {
+  def getPath: ListBuffer[Direction] = {
     val foundedPath = setPath().reverse
     var lastPos = foundedPath.remove(0)
     val movementInstruction = new ListBuffer[Direction]()
@@ -135,7 +115,6 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       else
         movementInstruction.append(NORTH)
       lastPos = pos
-      //      println("(" + pos._1 + "," + pos._2 + ")")
     })
     movementInstruction
   }
@@ -145,19 +124,11 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       println("cN: " +(node.current.x, node.current.y) + " with parent " +(node.parent.x, node.parent.y)))
     val path = new ListBuffer[(Int, Int)]
     val target = closedNodes.remove(closedNodes.length - 1)
-    //    println(target.current.x, target.current.y)
-    //    println(target.parent.x, target.parent.y)
     path.append(targetPosition)
     var pos = (target.parent.x, target.parent.y)
     while (pos != startPosition) {
-      //    println(pos)
-      //            println("(" + pos._1 + "," + pos._2 + ") vs (" + startPosition._1 + "," + startPosition._2 + ")")
       path.append(pos)
       closedNodes.foreach(node => {
-        //                println("cN: " + (node.current.x, node.current.y) + " with parent " + (node.parent.x, node.parent.y))
-        //        println(pos._1 + "vs" + node.current.x + " " + (pos._1 == node.current.x).toString + " : " + pos._2 + "vs" + node.current.y + " " + (pos._2 == node.current.y).toString)
-        //        println(pos._2 + " vs " + node.current.y)
-        //        println("(" + pos._1 + "," + pos._2 + ") vs (" + node.current.x + "," + node.current.y + ")")
         if (pos._1 == node.current.x && pos._2 == node.current.y)
           pos = (node.parent.x, node.parent.y)
       })
