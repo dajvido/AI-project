@@ -3,11 +3,11 @@ package obj.astar
 import java.io.FileWriter
 
 import obj.Direction._
-import obj.astar.exceptions.{NodeFoundedException, TargetNodeFoundedException}
+import obj.astar.exceptions.TargetNodeFoundedException
 import obj.{Board, Pos, Values}
 
 import scala.collection.mutable.ListBuffer
-import scala.math.{pow, sqrt}
+import scala.math.abs
 
 
 class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
@@ -32,12 +32,23 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
           closedNodes.append(successor)
           throw TargetNodeFoundedException
         }
-        successor.current.g += currentNode.current.g
-        successor.current.h = estimatedDistance(successor.current)
-        successor.current.f = successor.current.g + successor.current.h
-
-        if (shouldAddToOpenList(successor))
+        var nodeInOpenList = false
+        openNodes.foreach(node => {
+          if (node.current.x == successor.current.x && node.current.y == successor.current.y) {
+            nodeInOpenList = true
+            if (node.current.g > successor.current.g) {
+              node.parent = currentNode.current
+              node.current.g = successor.current.g + currentNode.current.g
+              node.current.f = node.current.g + node.current.h
+            }
+          }
+        })
+        if (!nodeInOpenList) {
+          successor.current.g += currentNode.current.g
+          successor.current.h = estimatedDistance(successor.current)
+          successor.current.f = successor.current.g + successor.current.h
           openNodes.append(successor)
+        }
       })
     catch {
       case TargetNodeFoundedException =>
@@ -49,28 +60,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     startPosition != targetPosition
   }
 
-  def getBestNode: Node = {
-    var i = -1
-    var betterOne = false
-
-    var bestNode = openNodes.head
-    try
-      openNodes.foreach(node => {
-        i += 1
-        if (node.current.f < bestNode.current.f) {
-          bestNode = node
-          throw NodeFoundedException
-        }
-      })
-    catch {
-      case NodeFoundedException =>
-        betterOne = true
-    }
-    if (!betterOne)
-      i = 0
-
-    openNodes.remove(i)
-  }
+  def getBestNode: Node = openNodes.remove(openNodes.indexOf(openNodes.minBy(node => node.current.f)))
 
   def getSuccessorsList(parent: Node): ListBuffer[Node] = {
     val px = parent.current.x
@@ -125,7 +115,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   }
 
   def estimatedDistance(successor: Pos): Double = {
-    sqrt(pow(targetPosition._1 - successor.x, 2) + pow(targetPosition._2 - successor.y, 2))
+    abs(targetPosition._1 - successor.x) + abs(targetPosition._2 - successor.y)
   }
 
   def shouldAddToOpenList(successor: Node): Boolean = {
@@ -149,6 +139,15 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     logList.foreach(line => fw.write(line + Values.NEXT_LINE))
     fw.write(Values.WALL)
     fw.close()
+  }
+
+  def getMapArrayOfNodeF: Array[Array[String]] = {
+    val map = Array.ofDim[String](Board.SIZE, Board.SIZE)
+    for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
+      val d = Board.board(xi)(yi).f
+      map(xi)(yi) = if (d < 10) d.toInt + "  " else d.toInt + " "
+    }
+    map
   }
 
   def getMapArray: Array[Array[String]] = {
@@ -190,17 +189,18 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       logList.append(logRow)
       println()
     }
-    logList.append(Values.METRIC)
-    println(Values.METRIC)
+    logList.append(Values.NEXT_LINE)
+    println(Values.NEXT_LINE)
     logList
   }
 
   def generatePathMap(): Unit = {
     if (isDifferentStartAndTargetPos) {
-      val map = getMapArray
-      val logList = generateTheLog(map)
+      val logMapList = generateTheLog(getMapArray)
+      val logCostList = generateTheLog(getMapArrayOfNodeF)
 
-      writeToLog(logList)
+      writeToLog(logMapList)
+      writeToLog(logCostList)
     }
   }
 
@@ -239,7 +239,18 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     movementInstruction
   }
 
+  def clearPathCost(): Unit = {
+    var field = 0
+    for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
+      field = Pos.mapField(xi, yi)
+      Board.board(xi)(yi).g = Pos.moveCost(field)
+      Board.board(xi)(yi).h = 0.0
+      Board.board(xi)(yi).f = 0.0
+    }
+  }
+
   def getPath: ListBuffer[Direction] = {
+    clearPathCost()
     var movementInstruction = new ListBuffer[Direction]()
     if (isDifferentStartAndTargetPos) {
       movementInstruction = findDirection

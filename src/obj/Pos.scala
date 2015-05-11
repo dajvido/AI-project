@@ -123,7 +123,6 @@ object Pos {
 
   def enterableFor(n: Int): Boolean = {
     n match {
-      case 7 => false
       case 8 => false
       case 9 => false
       case 10 => false
@@ -132,16 +131,16 @@ object Pos {
   }
 
 
-  def moveCost(n: Int): Int = {
+  def moveCost(n: Int): Double = {
     n match {
-      case 1 => 2
-      case 2 => 2
-      case 3 => 2
-      case 4 => 2
-      case 5 => 2
-      case 6 => 2
-      case 7 => 3
-      case _ => 1
+      case 1 => 3.0
+      case 2 => 3.0
+      case 3 => 3.0
+      case 4 => 2.0
+      case 5 => 2.0
+      case 6 => 2.0
+      case 7 => 4.0
+      case _ => 1.0
     }
   }
 

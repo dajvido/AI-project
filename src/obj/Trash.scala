@@ -3,4 +3,4 @@ package obj
 import obj.Material._
 
 
-class Trash(val material: Material, val weight: Double) {}
+class Trash(val n: Int, val material: Material, val name: String) {}
