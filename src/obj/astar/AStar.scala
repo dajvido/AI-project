@@ -48,10 +48,8 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   def isDifferentStartAndTargetPos: Boolean = {
     startPosition != targetPosition
   }
-  var i = 0
-  def getBestNode: Node = {
-    openNodes.remove(openNodes.indexOf(openNodes.minBy(node => node.current.f)))
-  }
+
+  def getBestNode: Node = openNodes.remove(openNodes.indexOf(openNodes.minBy(node => node.current.f)))
 
   def getSuccessorsList(parent: Node): ListBuffer[Node] = {
     val px = parent.current.x
@@ -136,12 +134,8 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     val foundedPath = setPath()
     val map = Array.ofDim[String](Board.SIZE, Board.SIZE)
     for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
-      map(xi)(yi) = "0  "
-      closedNodes.foreach(node => {
-        if (node.current.x == xi && node.current.y == yi) {
-          map(xi)(yi) = if (node.current.f < 10) node.current.f.toInt + "  " else node.current.f.toInt + " "
-        }
-      })
+      val d = Board.board(xi)(yi).g
+      map(xi)(yi) = if (d < 10) d.toInt + "  " else d.toInt + " "
     }
     map
   }
