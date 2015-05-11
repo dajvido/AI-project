@@ -32,12 +32,23 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
           closedNodes.append(successor)
           throw TargetNodeFoundedException
         }
-        successor.current.g += currentNode.current.g
-        successor.current.h = estimatedDistance(successor.current)
-        successor.current.f = successor.current.g + successor.current.h
-
-        if (shouldAddToOpenList(successor))
+        var nodeInOpenList = false
+        openNodes.foreach(node => {
+          if (node.current.x == successor.current.x && node.current.y == successor.current.y) {
+            nodeInOpenList = true
+            if (node.current.g > successor.current.g) {
+              node.parent = currentNode.current
+              node.current.g = successor.current.g + currentNode.current.g
+              node.current.f = node.current.g + node.current.h
+            }
+          }
+        })
+        if (!nodeInOpenList) {
+          successor.current.g += currentNode.current.g
+          successor.current.h = estimatedDistance(successor.current)
+          successor.current.f = successor.current.g + successor.current.h
           openNodes.append(successor)
+        }
       })
     catch {
       case TargetNodeFoundedException =>
@@ -131,15 +142,13 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   }
 
   def getMapArrayOfNodeF: Array[Array[String]] = {
-    val foundedPath = setPath()
     val map = Array.ofDim[String](Board.SIZE, Board.SIZE)
     for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
-      val d = Board.board(xi)(yi).g
+      val d = Board.board(xi)(yi).f
       map(xi)(yi) = if (d < 10) d.toInt + "  " else d.toInt + " "
     }
     map
   }
-
 
   def getMapArray: Array[Array[String]] = {
     val foundedPath = setPath()
@@ -180,19 +189,18 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
       logList.append(logRow)
       println()
     }
-    logList.append(Values.METRIC)
-    println(Values.METRIC)
+    logList.append(Values.NEXT_LINE)
+    println(Values.NEXT_LINE)
     logList
   }
 
   def generatePathMap(): Unit = {
     if (isDifferentStartAndTargetPos) {
-      val map = getMapArray
-      val logList = generateTheLog(map)
+      val logMapList = generateTheLog(getMapArray)
+      val logCostList = generateTheLog(getMapArrayOfNodeF)
 
-      generateTheLog(getMapArrayOfNodeF)
-
-      writeToLog(logList)
+      writeToLog(logMapList)
+      writeToLog(logCostList)
     }
   }
 
@@ -231,7 +239,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     movementInstruction
   }
 
-  def clearPathCost: Unit = {
+  def clearPathCost(): Unit = {
     var field = 0
     for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
       field = Pos.mapField(xi, yi)
@@ -242,7 +250,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   }
 
   def getPath: ListBuffer[Direction] = {
-    clearPathCost
+    clearPathCost()
     var movementInstruction = new ListBuffer[Direction]()
     if (isDifferentStartAndTargetPos) {
       movementInstruction = findDirection
