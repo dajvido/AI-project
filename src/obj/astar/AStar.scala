@@ -7,7 +7,7 @@ import obj.astar.exceptions.TargetNodeFoundedException
 import obj.{Board, Pos, Values}
 
 import scala.collection.mutable.ListBuffer
-import scala.math.{pow, sqrt}
+import scala.math.{pow, abs}
 
 
 class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
@@ -115,7 +115,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   }
 
   def estimatedDistance(successor: Pos): Double = {
-    sqrt(pow(targetPosition._1 - successor.x, 2) + pow(targetPosition._2 - successor.y, 2))
+    abs(targetPosition._1 - successor.x) + abs(targetPosition._2 - successor.y)
   }
 
   def shouldAddToOpenList(successor: Node): Boolean = {
