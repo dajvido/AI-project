@@ -7,7 +7,7 @@ import obj.astar.exceptions.TargetNodeFoundedException
 import obj.{Board, Pos, Values}
 
 import scala.collection.mutable.ListBuffer
-import scala.math.{pow, abs}
+import scala.math.abs
 
 
 class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
