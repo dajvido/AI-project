@@ -123,7 +123,6 @@ object Pos {
 
   def enterableFor(n: Int): Boolean = {
     n match {
-      case 7 => false
       case 8 => false
       case 9 => false
       case 10 => false
