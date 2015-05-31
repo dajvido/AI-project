@@ -16,7 +16,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
   var closedNodes = new ListBuffer[Node]()
 
   val currentPos = Board.board(startPosition._1)(startPosition._2)
-  var currentNode = new Node(currentPos, currentPos)
+  var currentNode = new Node(current = currentPos)
   openNodes += currentNode
 
   var targetAchieved = false
@@ -37,7 +37,7 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
           if (node.current.x == successor.current.x && node.current.y == successor.current.y) {
             nodeInOpenList = true
             if (node.current.g > successor.current.g) {
-              node.parent = currentNode.current
+              node.parent = currentNode
               node.current.g = successor.current.g + currentNode.current.g
               node.current.f = node.current.g + node.current.h
             }
@@ -93,11 +93,25 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     Board.board(x)(y)
   }
 
+  val move = (direction: Direction) => Board.move(direction)
+
+  def whichDirection(lastPos: Pos, newPos: Pos): Direction = {
+    if (newPos.x > lastPos.x)
+      EAST
+    else if (newPos.x < lastPos.x)
+      WEST
+    else if (newPos.y > lastPos.y)
+      SOUTH
+    else
+      NORTH
+  }
+
   def getNodeOrNull(checkPos: Pos, parentNode: Node): Node = {
     if (checkPos.canEnter) {
       val availableNode = new Node(
-        parent = parentNode.current,
-        current = checkPos
+        parent = parentNode,
+        current = checkPos,
+        action = () => move(whichDirection(parentNode.current, checkPos))
       )
       if (isNotInClosedNodes(availableNode)) {
         return availableNode
@@ -150,24 +164,6 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     map
   }
 
-  def getMapArray: Array[Array[String]] = {
-    val foundedPath = setPath()
-    val map = Array.ofDim[String](Board.SIZE, Board.SIZE)
-    for (xi <- 0 to Board.SIZE - 1; yi <- 0 to Board.SIZE - 1) {
-      map(xi)(yi) = Values.E * 3
-      closedNodes.foreach(node => {
-        if (node.current.x == xi && node.current.y == yi) {
-          map(xi)(yi) = Values.S
-          foundedPath.foreach(pos => {
-            if ((xi, yi) == pos)
-              map(xi)(yi) = Values.X
-          })
-        }
-      })
-    }
-    map
-  }
-
   def generateTheLog(map: Array[Array[String]]): ListBuffer[String] = {
     val logList = new ListBuffer[String]
     var logRow: String = ""
@@ -196,47 +192,10 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
 
   def generatePathMap(): Unit = {
     if (isDifferentStartAndTargetPos) {
-      val logMapList = generateTheLog(getMapArray)
       val logCostList = generateTheLog(getMapArrayOfNodeF)
 
-      writeToLog(logMapList)
       writeToLog(logCostList)
     }
-  }
-
-  def setPath(): ListBuffer[(Int, Int)] = {
-    val path = new ListBuffer[(Int, Int)]
-    val target = closedNodes.last
-    var pos = (target.parent.x, target.parent.y)
-
-    path.append(targetPosition)
-    while (pos != startPosition) {
-      path.append(pos)
-      closedNodes.foreach(node => {
-        if (pos._1 == node.current.x && pos._2 == node.current.y)
-          pos = (node.parent.x, node.parent.y)
-      })
-    }
-    path.append(pos)
-    path.reverse
-  }
-
-  def findDirection: ListBuffer[Direction] = {
-    val movementInstruction = new ListBuffer[Direction]()
-    val foundedPath = setPath()
-    var lastPos = foundedPath.remove(0)
-    foundedPath.foreach(pos => {
-      if (pos._1 > lastPos._1)
-        movementInstruction.append(EAST)
-      else if (pos._1 < lastPos._1)
-        movementInstruction.append(WEST)
-      else if (pos._2 > lastPos._2)
-        movementInstruction.append(SOUTH)
-      else
-        movementInstruction.append(NORTH)
-      lastPos = pos
-    })
-    movementInstruction
   }
 
   def clearPathCost(): Unit = {
@@ -249,12 +208,30 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     }
   }
 
-  def getPath: ListBuffer[Direction] = {
+  def getPath: ListBuffer[() => Unit] = {
     clearPathCost()
-    var movementInstruction = new ListBuffer[Direction]()
+    var movementInstruction = new ListBuffer[() => Unit]()
     if (isDifferentStartAndTargetPos) {
-      movementInstruction = findDirection
+      movementInstruction = getActions
     }
     movementInstruction
+  }
+
+  def getActions: ListBuffer[() => Unit] = {
+    val actions = new ListBuffer[() => Unit]
+
+    val target = closedNodes.last
+    actions.append(target.action)
+
+    var parent = target.parent
+
+    while (startPosition !=(parent.current.x, parent.current.y)) {
+      actions.append(parent.action)
+      closedNodes.foreach(node => {
+        if (parent.current.x == node.current.x && parent.current.y == node.current.y)
+          parent = node.parent
+      })
+    }
+    actions.reverse
   }
 }

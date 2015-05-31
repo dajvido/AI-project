@@ -90,10 +90,21 @@ object Board {
     }.start()
   }
 
+  def doActions(actions: ListBuffer[() => Unit]): Unit = {
+    new Thread {
+      override def run(): Unit = {
+        actions.foreach(action => {
+          action()
+          Thread.sleep(200)
+        })
+      }
+    }.start()
+  }
+
   def moveTo(targetPos: (Int, Int)): Unit = {
     val astar = new AStar(Pos.ofHero, targetPos)
     astar.generatePathMap()
-    val movement = astar.getPath
-    Board.moveList(movement)
+    val actions = astar.getPath
+    Board.doActions(actions)
   }
 }
