@@ -107,4 +107,11 @@ object Board {
     val actions = astar.getPath
     Board.doActions(actions)
   }
+
+  def costTo(targetPos: (Int, Int)): Double = {
+    val astar = new AStar(Pos.ofHero, targetPos)
+    val cost = astar.getPathCost
+    println("Cost to " + targetPos + " : " + cost)
+    cost
+  }
 }

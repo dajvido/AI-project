@@ -234,4 +234,31 @@ class AStar(val startPosition: (Int, Int), val targetPosition: (Int, Int)) {
     }
     actions.reverse
   }
+
+  def getCost: Double = {
+    var cost = 0.0
+
+    val target = closedNodes.last
+    cost = cost + target.current.g
+
+    var parent = target.parent
+
+    while (startPosition !=(parent.current.x, parent.current.y)) {
+      cost = cost + parent.current.g
+      closedNodes.foreach(node => {
+        if (parent.current.x == node.current.x && parent.current.y == node.current.y)
+          parent = node.parent
+      })
+    }
+    cost
+  }
+
+  def getPathCost: Double = {
+    var cost = 0.0
+    clearPathCost()
+    if (isDifferentStartAndTargetPos) {
+      cost = getCost
+    }
+    cost
+  }
 }
